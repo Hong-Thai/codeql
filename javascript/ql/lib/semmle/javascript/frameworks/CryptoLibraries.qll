@@ -157,8 +157,17 @@ private module NodeJSCrypto {
 
       exists(DataFlow::SourceNode mod |
         mod = DataFlow::moduleImport("crypto") and
-        this = mod.getAMemberCall("create" + ["Hash", "Hmac", "Sign", "Cipher"]) and
+        (this = mod.getAMemberCall("create" + ["Hash", "Hmac", "Sign", "Cipher", "Cipheriv"]) or 
+          this = mod.getAMemberCall(["hkdf", "hkdfSync"])
+        ) and
         algorithm.matchesName(this.getArgument(0).getStringValue())
+      )
+      or
+      exists(DataFlow::SourceNode mod |
+        mod = DataFlow::moduleImport("crypto") and
+        this = mod.getAMemberCall(["pbkdf2", "pbkdf2Sync"])
+        and
+        algorithm.matchesName(this.getArgument(4).getStringValue())
       )
     }
 
@@ -173,13 +182,23 @@ private module NodeJSCrypto {
       // crypto.generateKeyPair(type, options, callback)
       // crypto.generateKeyPairSync(type, options)
       // crypto.generateKeySync(type, options)
-      exists(DataFlow::SourceNode mod, string keyType |
-        keyType = "Key" and symmetric = true
+      exists(DataFlow::SourceNode mod, string keyCreator |
+        keyCreator = "generateKey" and symmetric = true
         or
-        keyType = "KeyPair" and symmetric = false
+        keyCreator = "generateKeyPair" and symmetric = false
+        or
+        keyCreator = "createSecretKey" and symmetric = true
+        or
+        keyCreator = "createPrivateKey" and symmetric = false
+        or
+        keyCreator = "createPublicKey" and symmetric = false
+        or
+        keyCreator = "hkdf" and symmetric = true
+        or 
+        keyCreator = "pbkdf2" and symmetric = true
       |
         mod = DataFlow::moduleImport("crypto") and
-        this = mod.getAMemberCall("generate" + keyType + ["", "Sync"])
+        this = mod.getAMemberCall(keyCreator + ["", "Sync"])
       )
     }
 
@@ -201,12 +220,12 @@ private module NodeJSCrypto {
   private class CreateDiffieHellmanKey extends CryptographicKeyCreation, DataFlow::CallNode {
     // require("crypto").createDiffieHellman(prime_length);
     CreateDiffieHellmanKey() {
-      this = DataFlow::moduleMember("crypto", "createDiffieHellman").getACall()
+      this = DataFlow::moduleMember("crypto", "createDiffieHellman").getACall() 
     }
 
     override CryptographicAlgorithm getAlgorithm() { none() }
 
-    override int getSize() { result = this.getArgument(0).getIntValue() }
+    override int getSize() { result = this.getArgument(0).getIntValue() } //Not completed yet (Two definitions)
 
     override predicate isSymmetricKey() { none() }
   }
@@ -236,7 +255,7 @@ private module NodeJSCrypto {
         this = call.getArgument(index)
       |
         index = 0 and
-        (name = "privateDecrypt" or name = "privateEncrypt")
+        (name = "privateDecrypt" or name = "privateEncrypt" or name = "publicEncrypt")
         or
         index = 1 and
         (name = "createCipheriv" or name = "Decipheriv" or name = "createHmac")
