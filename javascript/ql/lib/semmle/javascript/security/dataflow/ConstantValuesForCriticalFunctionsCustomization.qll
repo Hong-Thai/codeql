@@ -34,11 +34,25 @@ module ConstantValue {
       exists(DataFlow::SourceNode fs, DataFlow::CallNode node |
         fs = DataFlow::moduleImport("fs") 
         and
-        node = fs.getAMemberCall("readFileSync")
+        node = fs.getAMemberCall("readFile"+["","Sync"])
         |
         this = node
       )
       or this.asExpr() instanceof ConstantString
+    }
+  }
+
+  class ConstantValuesReadAsyncSource extends Source {
+    ConstantValuesReadAsyncSource() {
+      exists(DataFlow::SourceNode fs, DataFlow::FunctionNode callback, DataFlow::Node param|
+        fs = DataFlow::moduleImport("fs") 
+        and
+        callback = fs.getAMemberCall("readFile").getArgument(2)
+        and
+        param = callback.getParameter(1)
+        |
+        this = param
+      )
     }
   }
   
