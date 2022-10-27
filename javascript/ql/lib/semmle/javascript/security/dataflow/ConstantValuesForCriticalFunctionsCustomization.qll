@@ -38,6 +38,7 @@ module ConstantValue {
         |
         this = node
       )
+      or this.asExpr() instanceof ConstantString
     }
   }
   
