@@ -31,7 +31,7 @@ module ConstantValue {
    */
   class ConstantValuesSource extends Source {
     ConstantValuesSource() {
-      exists(DataFlow::SourceNode fs, DataFlow::CallNode node|
+      exists(DataFlow::SourceNode fs, DataFlow::CallNode node |
         fs = DataFlow::moduleImport("fs") 
         and
         node = fs.getAMemberCall("readFileSync")
@@ -44,10 +44,54 @@ module ConstantValue {
 
   class ConstantValuesSink extends Sink {
     ConstantValuesSink(){
-        exists(DataFlow::CallNode test, DataFlow::InvokeNode node |
-            test.getCalleeName() = "publicEncryptTest"
+        exists(DataFlow::SourceNode crypto, DataFlow::CallNode node |
+          crypto = DataFlow::moduleImport("crypto") 
+          and
+          (node = crypto.getAMemberCall("publicEncrypt")
+          or
+          node = crypto.getAMemberCall("privateEncrypt")
+          or
+          node = crypto.getAMemberCall("pbkdf2" + ["", "Sync"])
+          or
+          node = crypto.getAMemberCall("scrypt" + ["", ["Sync"]])
+          or
+          node = crypto.getAMemberCall("createPrivateKey")
+          or
+          node = crypto.getAMemberCall("createPublicKey")
+          or
+          node = crypto.getAMemberCall("createSecretKey")
+          )
             |
-            this = test.getArgument(0)
+            this = node.getArgument(0)
+        )
+        or
+          exists(DataFlow::SourceNode crypto, DataFlow::CallNode node |
+            crypto = DataFlow::moduleImport("crypto") 
+            and
+            (node = crypto.getAMemberCall("createCipheriv")
+            or
+            node = crypto.getAMemberCall("createHmac")
+            or
+            node = crypto.getAMemberCall("hkdf" + ["", "Sync"])
+            or
+            node = crypto.getAMemberCall("pbkdf2" + ["", "Sync"])
+            or
+            node = crypto.getAMemberCall("scrypt" + ["", ["Sync"]])
+            )
+              |
+              this = node.getArgument(1)
+          )
+          or
+          exists(DataFlow::SourceNode crypto, DataFlow::CallNode node |
+            crypto = DataFlow::moduleImport("crypto") 
+            and
+            (
+            node = crypto.getAMemberCall("hkdf" + ["", "Sync"])
+            or
+            node = crypto.getAMemberCall("sign")
+            )
+              |
+              this = node.getArgument(2)
           )
     }
   }
