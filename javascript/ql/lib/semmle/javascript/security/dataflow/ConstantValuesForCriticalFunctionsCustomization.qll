@@ -108,6 +108,16 @@ module ConstantValue {
               |
               this = node.getArgument(2)
           )
+        or
+        exists(DataFlow::SourceNode crypto, DataFlow::CallNode node |
+          crypto = DataFlow::moduleImport("crypto") 
+          and
+          (
+          node = crypto.getAMemberCall("diffieHellman")
+          )
+            |
+            this = node.getOptionArgument(0, "privateKey")
+        )
     }
   }
 }
