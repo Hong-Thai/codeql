@@ -43,6 +43,7 @@ abstract class CryptographicKeyCreation extends DataFlow::Node {
    * Gets whether the key is symmetric.
    */
   abstract predicate isSymmetricKey();
+
 }
 
 /**
@@ -176,26 +177,21 @@ private module NodeJSCrypto {
 
   private class CreateKey extends CryptographicKeyCreation, DataFlow::CallNode {
     boolean symmetric;
+    string keyCreator;
 
     CreateKey() {
       // crypto.generateKey(type, options, callback)
       // crypto.generateKeyPair(type, options, callback)
       // crypto.generateKeyPairSync(type, options)
       // crypto.generateKeySync(type, options)
-      exists(DataFlow::SourceNode mod, string keyCreator |
+      exists(DataFlow::SourceNode mod|
         keyCreator = "generateKey" and symmetric = true
         or
         keyCreator = "generateKeyPair" and symmetric = false
-        or
-        keyCreator = "createSecretKey" and symmetric = true
-        or
-        keyCreator = "createPrivateKey" and symmetric = false
-        or
-        keyCreator = "createPublicKey" and symmetric = false
-        or
-        keyCreator = "hkdf" and symmetric = true
         or 
         keyCreator = "pbkdf2" and symmetric = true
+        or
+        keyCreator = "scrypt" and symmetric = true
       |
         mod = DataFlow::moduleImport("crypto") and
         this = mod.getAMemberCall(keyCreator + ["", "Sync"])
@@ -216,6 +212,53 @@ private module NodeJSCrypto {
 
     override predicate isSymmetricKey() { symmetric = true }
   }
+
+  private class HkdfKey extends CryptographicKeyCreation, DataFlow::CallNode {
+    string keyCreator;
+    boolean symmetric;
+    HkdfKey() {
+      exists(DataFlow::SourceNode mod|
+        keyCreator = "hkdf" and symmetric = true
+      |
+        mod = DataFlow::moduleImport("crypto") and
+        this = mod.getAMemberCall(keyCreator + ["", "Sync"])
+      )
+    }
+
+    override CryptographicAlgorithm getAlgorithm() {
+      result.matchesName(this.getArgument(0).getStringValue())
+    }
+
+    override int getSize() {
+      result = this.getArgument(4).getIntValue()
+    }
+
+    override predicate isSymmetricKey() { symmetric = true }
+  }
+
+  private class Pbkdf2Key extends CryptographicKeyCreation, DataFlow::CallNode {
+    string keyCreator;
+    boolean symmetric;
+    Pbkdf2Key() {
+      exists(DataFlow::SourceNode mod|
+        keyCreator = "pbkdf2" and symmetric = true
+      |
+        mod = DataFlow::moduleImport("crypto") and
+        this = mod.getAMemberCall(keyCreator + ["", "Sync"])
+      )
+    }
+
+    override CryptographicAlgorithm getAlgorithm() {
+      result.matchesName(this.getArgument(4).getStringValue())
+    }
+
+    override int getSize() {
+      result = this.getArgument(3).getIntValue()
+    }
+
+    override predicate isSymmetricKey() { symmetric = true }
+  }
+
 
   private class CreateDiffieHellmanKey extends CryptographicKeyCreation, DataFlow::CallNode {
     // require("crypto").createDiffieHellman(prime_length);
@@ -239,6 +282,17 @@ private module NodeJSCrypto {
 
     override CryptographicAlgorithm getAlgorithm() { result = instantiation.getAlgorithm() }
   }
+
+  private class CryptoFunctions extends CryptographicOperation instanceof DataFlow::MethodCallNode {
+    InstantiatedAlgorithm instantiation;
+
+    CryptoFunctions() { this = instantiation }
+
+    override DataFlow::Node getInput() { result = super.getArgument(0) }
+
+    override CryptographicAlgorithm getAlgorithm() { result = instantiation.getAlgorithm() }
+  }
+
 
   private class Key extends CryptographicKey {
     Key() {
