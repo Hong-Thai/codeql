@@ -401,7 +401,7 @@ DataFlow::SourceNode globalObjectRef() {
  * require('global/foo')
  * ```
  */
-private DataFlow::SourceNode globalVariable(string name) {
+DataFlow::SourceNode globalVariable(string name) {
   result.(GlobalVarRefNode).getName() = name
   or
   // `require("global/document")` or `require("global/window")`
