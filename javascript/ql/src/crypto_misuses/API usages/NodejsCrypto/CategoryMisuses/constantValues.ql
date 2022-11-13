@@ -6,5 +6,5 @@ import DataFlow::PathGraph
 from Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink, string msg
 where
   cfg.hasFlowPath(source, sink) 
-  and msg = "Don't your the constant value " + source + " as a parameter to the function " + sink
+  and msg = "Don't use the constant value " + source + " as a parameter to the function " + sink
 select sink.getNode(), source, sink, msg

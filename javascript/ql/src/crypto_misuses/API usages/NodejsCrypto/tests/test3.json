@@ -1,0 +1,36 @@
+{"#select":{"columns":[
+   {"name":"crypto_api_name","kind":"String"}
+  ,{"name":"function_name","kind":"String"}
+  ,{"name":"call","kind":"Entity"}
+  ,{"name":"reference","kind":"Entity"}
+  ,{"name":"description","kind":"String"}]
+ ,"tuples":[
+   ["NodeJsCrypto","privateEncrypt",{"label":"crypto. ... etData)"},{"label":"asmEncryptTest.js:5"},"Usage of privateEncrypt from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","publicEncrypt",{"label":"crypto. ... etData)"},{"label":"asmEncryptTest.js:9"},"Usage of publicEncrypt from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","sign",{"label":"crypto. ... a, key)"},{"label":"asmEncryptTest.js:13"},"Usage of sign from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","generateKeySync",{"label":"crypto. ... ;\\r\\n  })"},{"label":"createCipherivTest.js:6"},"Usage of generateKeySync from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","generateKeySync",{"label":"crypto. ... th: 8})"},{"label":"generateTests.js:4"},"Usage of generateKeySync from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createCipheriv",{"label":"crypto. ... aaaaa\")"},{"label":"createCipherivTest.js:14"},"Usage of createCipheriv from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createPrivateKey",{"label":"crypto. ... ey(key)"},{"label":"createCryptoInstancesTests.js:5"},"Usage of createPrivateKey from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createPublicKey",{"label":"crypto. ... ey(key)"},{"label":"createCryptoInstancesTests.js:9"},"Usage of createPublicKey from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createSecretKey",{"label":"crypto. ... coding)"},{"label":"createCryptoInstancesTests.js:13"},"Usage of createSecretKey from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createSign",{"label":"crypto. ... \"sha1\")"},{"label":"createCryptoInstancesTests.js:17"},"Usage of createSign from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createVerify",{"label":"crypto. ... \"sha1\")"},{"label":"createCryptoInstancesTests.js:18"},"Usage of createVerify from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createCipher",{"label":"crypto. ... retaa\")"},{"label":"deprecatedTest.js:4"},"Usage of createCipher from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createDecipher",{"label":"crypto. ... retaa\")"},{"label":"deprecatedTest.js:11"},"Usage of createDecipher from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createDiffieHellman",{"label":"crypto. ...  \"hex\")"},{"label":"diffie-hellmannTest.js:4"},"Usage of createDiffieHellman from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createDiffieHellman",{"label":"crypto. ... man(12)"},{"label":"diffie-hellmannTest.js:10"},"Usage of createDiffieHellman from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createDiffieHellman",{"label":"crypto. ... (prime)"},{"label":"generateTests.js:32"},"Usage of createDiffieHellman from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createDiffieHellmanGroup",{"label":"crypto. ... modp1\")"},{"label":"diffie-hellmannTest.js:16"},"Usage of createDiffieHellmanGroup from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createHash",{"label":"crypto. ... 'SHA1')"},{"label":"functionTest.js:4"},"Usage of createHash from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createHash",{"label":"crypto. ... \"SHA1\")"},{"label":"hashTest.js:5"},"Usage of createHash from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","generateKeyPairSync",{"label":"crypto. ... \\n    })"},{"label":"generateTests.js:8"},"Usage of generateKeyPairSync from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","generateKeyPairSync",{"label":"crypto. ... \\n    })"},{"label":"generateTests.js:14"},"Usage of generateKeyPairSync from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","generatePrimeSync",{"label":"crypto. ... Sync(8)"},{"label":"generateTests.js:31"},"Usage of generatePrimeSync from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","getHashes",{"label":"crypto.getHashes()"},{"label":"getHashes.js:3"},"Usage of getHashes from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","hkdfSync",{"label":"crypto. ... nfo, 8)"},{"label":"hkdfTest.js:4"},"Usage of hkdfSync from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","createHmac",{"label":"crypto. ... \", key)"},{"label":"hmacTest.js:4"},"Usage of createHmac from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","pbkdf2Sync",{"label":"crypto. ... \"sha1\")"},{"label":"pbkdfTest.js:5"},"Usage of pbkdf2Sync from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","scryptSync",{"label":"crypto. ... lt, 64)"},{"label":"scryptTest.js:4"},"Usage of scryptSync from the following API: NodeJsCrypto"]
+  ,["NodeJsCrypto","scryptSync",{"label":"crypto. ... st: 2})"},{"label":"scryptTest.js:10"},"Usage of scryptSync from the following API: NodeJsCrypto"]]
+ }}
