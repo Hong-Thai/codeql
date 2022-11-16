@@ -29,8 +29,8 @@ module ConstantValue {
   /**
    * 
    */
-  class ConstantValuesSource extends Source {
-    ConstantValuesSource() {
+  class FSReadValuesSource extends Source {
+    FSReadValuesSource() {
       exists(DataFlow::SourceNode fs, DataFlow::CallNode node |
         fs = DataFlow::moduleImport("fs") 
         and
@@ -38,7 +38,12 @@ module ConstantValue {
         |
         this = node
       )
-      or this.asExpr() instanceof ConstantString
+    }
+  }
+
+  class HardcodedValuesSource extends Source {
+    HardcodedValuesSource() {
+      this.asExpr() instanceof ConstantString
     }
   }
 
