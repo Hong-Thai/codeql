@@ -20,7 +20,7 @@ where
     and crypto_api_name = "NodeJsCrypto"
     and function_name = "createCipheriv"
     and function_category = "encryption"
-    and misuse_category = "ShortNumber"
+    and misuse_category = "Short number"
     and status = "MISUSE"
     and path = reference.getFile().getRelativePath()
     and extra_information = ""
