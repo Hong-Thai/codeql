@@ -8,7 +8,8 @@ from DataFlow::SourceNode mod,
   string misuse_category, 
   string misuse_message,
   string status,
-  string path
+  string path,
+  string extra_information
 where mod = DataFlow::moduleImport("http")
     and reference = mod.asExpr().getLocation()
     and crypto_api_name = "NodeJsCrypto"
@@ -18,4 +19,5 @@ where mod = DataFlow::moduleImport("http")
     and misuse_message = "Using HTTP leads to an insecure communication channel. Consider using HTTPS."
     and status = "WARNING"
     and path = reference.getFile().getRelativePath()
-select crypto_api_name, function_name, function_category, misuse_category, misuse_message, status, reference, mod, path
+    and extra_information = ""
+select crypto_api_name, function_name, function_category, misuse_category, misuse_message, status, reference, mod, path, extra_information
