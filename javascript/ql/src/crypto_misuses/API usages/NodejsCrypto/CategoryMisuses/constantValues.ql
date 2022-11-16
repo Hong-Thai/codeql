@@ -18,7 +18,6 @@ from Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink,
   string extra_information
 where
   cfg.hasFlowPath(source, sink) 
-  and misuse_message = "The constant/hardcoded value: " + source + " flows into the sensitive function: " + sink + ". It is recommended to use freshly generated values for this."
   and crypto_api_name = "NodeJsCrypto"
   and function_ref.getAnArgument() = sink.getNode()
   and function_name = function_ref.getCalleeName()
@@ -28,6 +27,8 @@ where
   and reference2 = sink.getNode().asExpr().getLocation()
   and reference = reference1 + " -> " + reference2
   and path = reference1.getFile().getRelativePath() + " -> " + reference2.getFile().getRelativePath()
-  and ((source.getNode() instanceof HardcodedValuesSource and status = "MISUSE" and extra_information = source.toString())
-   or (not source.getNode() instanceof HardcodedValuesSource and status = "WARNING" and extra_information = ""))
+  and ((source.getNode() instanceof HardcodedValuesSource and status = "MISUSE" and extra_information = source.toString() 
+      and misuse_message = "The constant/hardcoded value: " + source + " flows into the sensitive function: " + sink + ". It is recommended to use freshly generated values for this.")
+   or (not source.getNode() instanceof HardcodedValuesSource and status = "WARNING" and extra_information = ""
+      and misuse_message = "A value read from a file using " + source + " flows into the sensitive function: " + sink + ". It is recommended to use freshly generated values for this."))
 select crypto_api_name, function_name, function_category, misuse_category, status, misuse_message, reference, path, extra_information
