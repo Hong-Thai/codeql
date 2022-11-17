@@ -18,7 +18,7 @@ where
     and reference = generateKeyPair.asExpr().getLocation()
     and crypto_api_name = "NodeJsCrypto"
     and function_name = "generateKeyPair"
-    and function_category = "KeyCreation"
+    and function_category = "key creation"
     and misuse_category = "Short number"
     and status = "MISUSE"
     and path = reference.getFile().getRelativePath()
