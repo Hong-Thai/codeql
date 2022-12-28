@@ -38,6 +38,20 @@
         result = algorithm
     }
    }
+
+   class BrokenAlgorithmSource extends Source {
+    CryptographicAlgorithm algorithm;
+    BrokenAlgorithmSource(){
+        this.asExpr() instanceof ConstantString
+        and algorithm.matchesName(this.getStringValue())
+        and algorithm.isWeak() 
+    }
+
+    override CryptographicAlgorithm getAlgorithm(){
+        result = algorithm
+    }
+   }
+
  
    /**
     * An expression used by a broken or weak cryptographic algorithm.
