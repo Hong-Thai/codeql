@@ -4,6 +4,7 @@
 
 import javascript
 import semmle.javascript.security.CryptoAlgorithms
+import semmle.javascript.security.dataflow.AlgorithmToArgumentCustomization
 
 /**
  * An application of a cryptographic algorithm.
@@ -156,19 +157,34 @@ private module NodeJSCrypto {
        *       Also matches `createHash`, `createHmac`, `createSign` instead of `createCipher`.
        */
 
-      exists(DataFlow::SourceNode mod |
+      exists(DataFlow::SourceNode mod,
+         AlgorithmToArgument::Sink sink,
+          AlgorithmToArgument::Source source, 
+          DataFlow::SourceNode tmp|
         mod = DataFlow::moduleImport("crypto") and
         (this = mod.getAMemberCall("create" + ["Hash", "Hmac", "Sign", "Cipher", "Cipheriv"]) or 
           this = mod.getAMemberCall(["hkdf", "hkdfSync"])
         ) and
-        algorithm.matchesName(this.getArgument(0).getStringValue())
+
+        sink = this.getArgument(0)
+        and tmp = source
+        and tmp.flowsTo(sink)
+        and
+        algorithm.matchesName(source.getAlgorithm().toString())
       )
       or
-      exists(DataFlow::SourceNode mod |
+      exists(DataFlow::SourceNode mod, 
+        AlgorithmToArgument::Sink sink,
+        AlgorithmToArgument::Source source, 
+        DataFlow::SourceNode tmp|
         mod = DataFlow::moduleImport("crypto") and
         this = mod.getAMemberCall(["pbkdf2", "pbkdf2Sync"])
         and
-        algorithm.matchesName(this.getArgument(4).getStringValue())
+        sink = this.getArgument(4)
+        and tmp = source
+        and tmp.flowsTo(sink)
+        and
+        algorithm.matchesName(source.getAlgorithm().toString())
       )
     }
 
