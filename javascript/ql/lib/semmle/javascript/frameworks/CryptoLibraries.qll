@@ -246,7 +246,7 @@ private module NodeJSCrypto {
     }
 
     override int getSize() {
-      result = this.getArgument(4).getIntValue()
+      result = this.getArgument(4).getIntValue()*8
     }
 
     override predicate isSymmetricKey() { symmetric = true }
@@ -269,7 +269,7 @@ private module NodeJSCrypto {
     }
 
     override int getSize() {
-      result = this.getArgument(3).getIntValue()
+      result = this.getArgument(3).getIntValue()*8
     }
 
     override predicate isSymmetricKey() { symmetric = true }
@@ -292,7 +292,7 @@ private module NodeJSCrypto {
     }
 
     override int getSize() {
-      result = this.getArgument(2 ).getIntValue()
+      result = this.getArgument(2).getIntValue()*8
     }
 
     override predicate isSymmetricKey() { symmetric = true }
