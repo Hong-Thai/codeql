@@ -17,14 +17,15 @@ DataFlow::CallNode function_ref,
   string status,
   string reference,
   string path,
-  string extra_information
+  string extra_information,
+  string source_reference,
+  string sink_reference,
+  string source_path,
+  string sink_path
 where
   cfg.hasFlowPath(source, sink) and
   not source.getNode() instanceof CleartextPasswordExpr // flagged by js/insufficient-password-hash
   and source.getNode() instanceof BrokenAlgorithmSource
-//  and (isWeakHashingAlgorithm(source.toString()) 
-//    or isWeakEncryptionAlgorithm(source.toString()) 
-//    or isWeakPasswordHashingAlgorithm(source.toString()))
   and crypto_api_name = "NodeJsCrypto"
   and function_ref.getAnArgument() = sink.getNode()
   and function_name = function_ref.getCalleeName()
@@ -34,7 +35,22 @@ where
   and reference2 = sink.getNode().asExpr().getLocation()
   and reference = reference1 + " -> " + reference2
   and path = reference1.getFile().getRelativePath() + " -> " + reference2.getFile().getRelativePath()
-  and misuse_message = ""
+  and misuse_message = function_name+ " uses an insecure cryptographic algorithm."
   and status = "MISUSE"
   and extra_information = ""
-select crypto_api_name, function_name, function_category, misuse_category, status, misuse_message, reference, path, extra_information, source, sink
+  and source_reference = reference1.toString()
+  and sink_reference = reference2.toString()
+  and source_path = reference1.getFile().getRelativePath()
+  and sink_path = reference2.getFile().getRelativePath()
+select crypto_api_name, 
+function_name, 
+function_category, 
+misuse_category, 
+status, 
+misuse_message, 
+reference, path, 
+extra_information, 
+source_reference, 
+sink_reference, 
+source_path, 
+sink_path

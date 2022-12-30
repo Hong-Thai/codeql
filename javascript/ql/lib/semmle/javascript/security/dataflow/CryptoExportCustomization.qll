@@ -49,15 +49,13 @@ select crypto_api_name, function_name, call, reference, description
     }
   }
 
-  /*class ExportSink extends Sink{
+  class ExportSink extends Sink {
     ExportSink(){
-        exists(ExportDeclaration export, DataFlow::no node |
-            node.getContainer().getAStmt() = export
-
-            |
-            this = node
-          )
+      exists(DataFlow::Node node, ExportDeclaration exports|
+        node.getAstNode() = exports.getAChild()
+        | this = node
+      )
     }
-  }*/
+  }
   
 }

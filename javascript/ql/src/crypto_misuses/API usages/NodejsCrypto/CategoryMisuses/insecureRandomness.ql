@@ -15,7 +15,11 @@ from Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink,
   string status,
   string reference,
   string path,
-  string extra_information
+  string extra_information,
+  string source_reference,
+  string sink_reference,
+  string source_path,
+  string sink_path
 where cfg.hasFlowPath(source, sink)
 and crypto_api_name = ""
   and function_name = ""
@@ -28,4 +32,20 @@ and crypto_api_name = ""
   and misuse_message = "This security context depends on a cryptographically insecure random number"
   and status = "MISUSE"
   and extra_information = ""
-select crypto_api_name, function_name, function_category, misuse_category, status, misuse_message, reference, path, extra_information
+  and source_reference = reference1.toString()
+  and sink_reference = reference2.toString()
+  and source_path = reference1.getFile().getRelativePath()
+  and sink_path = reference2.getFile().getRelativePath()
+select crypto_api_name,
+function_name,
+function_category, 
+misuse_category, 
+status, 
+misuse_message, 
+reference, 
+path, 
+extra_information,
+source_reference, 
+sink_reference, 
+source_path, 
+sink_path

@@ -106,6 +106,8 @@ module ConstantValue {
             crypto = DataFlow::moduleImport("crypto") 
             and
             (
+            node = crypto.getAMemberCall("createCipheriv")
+            or
             node = crypto.getAMemberCall("hkdf" + ["", "Sync"])
             or
             node = crypto.getAMemberCall("sign")

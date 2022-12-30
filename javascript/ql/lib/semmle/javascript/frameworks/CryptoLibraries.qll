@@ -204,10 +204,6 @@ private module NodeJSCrypto {
         keyCreator = "generateKey" and symmetric = true
         or
         keyCreator = "generateKeyPair" and symmetric = false
-        or 
-        keyCreator = "pbkdf2" and symmetric = true
-        or
-        keyCreator = "scrypt" and symmetric = true
       |
         mod = DataFlow::moduleImport("crypto") and
         this = mod.getAMemberCall(keyCreator + ["", "Sync"])
