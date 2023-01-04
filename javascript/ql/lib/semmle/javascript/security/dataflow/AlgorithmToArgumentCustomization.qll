@@ -20,7 +20,12 @@
    /**
     * A data flow sink for sensitive information in broken or weak cryptographic algorithms.
     */
-   abstract class Sink extends DataFlow::Node { }
+   abstract class Sink extends DataFlow::Node { 
+
+    abstract string getAPIName();
+
+    abstract DataFlow::CallNode getFunction();
+  }
  
    /**
     * A sanitizer for sensitive information in broken or weak cryptographic algorithms.
@@ -66,11 +71,90 @@
             ) and
             this = function.getArgument(0))
      }
-     DataFlow::CallNode getFunction(){
+
+     override string getAPIName() {
+      result = "NodeJSCrypto"
+     }
+     
+     override DataFlow::CallNode getFunction(){
         result = function
        }
      }
+
+     class W3CNoWindowAlgorithmSink extends Sink {
+      DataFlow::CallNode function;
+      W3CNoWindowAlgorithmSink() {
+        exists(DataFlow::SourceNode crypto,
+          DataFlow::SourceNode subtle|
+  
+          
+          crypto = DataFlow::globalVariable("crypto") 
+          and subtle = crypto.getAPropertyRead("subtle")
+          and 
+          function = subtle.getAMemberCall("digest")
+          and
+          this = function.getArgument(0)
+        )
+       }
+
+      override string getAPIName() {
+        result = "W3C"
+       }
+
+       override DataFlow::CallNode getFunction(){
+          result = function
+         }
+    }
+
+    class W3CWindowAlgorithmSink extends Sink {
+      DataFlow::CallNode function;
+      W3CWindowAlgorithmSink() {
+        exists(DataFlow::SourceNode window,
+          DataFlow::SourceNode crypto,
+          DataFlow::SourceNode subtle |
+  
+          window = DataFlow::globalVariable("window") 
+          and
+          crypto = window.getAPropertyRead("crypto")
+          and subtle = crypto.getAPropertyRead("subtle")
+          and 
+          function = subtle.getAMemberCall("deriveBits")
+          and
+          this = function.getOptionArgument(0, "hash")
+        )
+       }
+
+      override string getAPIName() {
+        result = "W3C"
+       }
+
+       override DataFlow::CallNode getFunction(){
+          result = function
+         }
+    }
    }
 
+
+
    
+
+   
+
+   /*
+   exists(DataFlow::SourceNode mod,
+          DataFlow::SourceNode crypto,
+          DataFlow::SourceNode subtle|
+
+          mod = DataFlow::globalVariable("window") 
+          and crypto = mod.getAPropertyRead("crypto") 
+          and subtle = crypto.getAPropertyRead("subtle")
+          and 
+          (this = subtle.getAMemberCall("deriveBits") 
+          and algorithm.matchesName(this.getOptionArgument(0, "hash").getStringValue())
+          or
+          this = subtle.getAMemberCall("deriveKey")
+          and (algorithm.matchesName(this.getOptionArgument(0, "hash").getStringValue()) or algorithm.matchesName(this.getOptionArgument(2, "hash").getStringValue()))
+          )
+        )
+    }*/
  

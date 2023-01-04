@@ -6,7 +6,6 @@ import DataFlow::PathGraph
 import semmle.javascript.security.internal.CryptoAlgorithmNames
 
 from Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink,
-DataFlow::CallNode function_ref,
   Location reference1,
   Location reference2,
   string crypto_api_name, 
@@ -23,12 +22,10 @@ DataFlow::CallNode function_ref,
   string source_path,
   string sink_path
 where
-  cfg.hasFlowPath(source, sink) and
-  not source.getNode() instanceof CleartextPasswordExpr // flagged by js/insufficient-password-hash
+  cfg.hasFlowPath(source, sink)
   and source.getNode() instanceof BrokenAlgorithmSource
-  and crypto_api_name = "NodeJsCrypto"
-  and function_ref.getAnArgument() = sink.getNode()
-  and function_name = function_ref.getCalleeName()
+  and crypto_api_name = sink.getNode().(Sink).getAPIName()
+  and function_name = sink.getNode().(Sink).getFunction().getCalleeName()
   and function_category = ""
   and misuse_category = "Broken crypto algorithm"
   and reference1 = source.getNode().asExpr().getLocation()
