@@ -64,8 +64,6 @@ class DeriveKey extends DataFlow::CallNode {
   }
 
   int getIterationsForPbkdf2() { result = this.getOptionArgument(0, "iterations").getIntValue() }
-
-  int getLength() { result = this.getArgument(2).getIntValue() }
 }
 
 
