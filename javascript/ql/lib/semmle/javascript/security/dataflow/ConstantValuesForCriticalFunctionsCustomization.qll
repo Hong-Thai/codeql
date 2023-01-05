@@ -19,12 +19,16 @@ module ConstantValue {
   /**
    * 
    */
-  abstract class Sink extends DataFlow::Node { }
+  abstract class Sink extends DataFlow::Node {
+    abstract string getAPIName();
+
+    abstract DataFlow::CallNode getFunction();
+   }
 
   /**
    * 
    */
-  abstract class Sanitizer extends DataFlow::Node { }
+  abstract class Sanitizer extends DataFlow::Node {}
 
   /**
    * 
@@ -63,8 +67,9 @@ module ConstantValue {
   
 
   class ConstantValuesSink extends Sink {
+    DataFlow::CallNode node;
     ConstantValuesSink(){
-        exists(DataFlow::SourceNode crypto, DataFlow::CallNode node |
+        exists(DataFlow::SourceNode crypto |
           crypto = DataFlow::moduleImport("crypto") 
           and
           (node = crypto.getAMemberCall("publicEncrypt")
@@ -85,7 +90,7 @@ module ConstantValue {
             this = node.getArgument(0)
         )
         or
-          exists(DataFlow::SourceNode crypto, DataFlow::CallNode node |
+          exists(DataFlow::SourceNode crypto |
             crypto = DataFlow::moduleImport("crypto") 
             and
             (node = crypto.getAMemberCall("createCipheriv")
@@ -102,7 +107,7 @@ module ConstantValue {
               this = node.getArgument(1)
           )
           or
-          exists(DataFlow::SourceNode crypto, DataFlow::CallNode node |
+          exists(DataFlow::SourceNode crypto |
             crypto = DataFlow::moduleImport("crypto") 
             and
             (
@@ -116,7 +121,7 @@ module ConstantValue {
               this = node.getArgument(2)
           )
         or
-        exists(DataFlow::SourceNode crypto, DataFlow::CallNode node |
+        exists(DataFlow::SourceNode crypto |
           crypto = DataFlow::moduleImport("crypto") 
           and
           (
@@ -126,5 +131,40 @@ module ConstantValue {
             this = node.getOptionArgument(0, "privateKey")
         )
     }
+
+    override string getAPIName(){
+      result = "NodeJSCrypto"
+    }
+
+    override DataFlow::CallNode getFunction(){
+      result = node
+    }
   }
+
+  class W3CConstantValueSink extends Sink {
+    DataFlow::CallNode function;
+
+    W3CConstantValueSink(){
+      exists(
+        DataFlow::SourceNode window, DataFlow::SourceNode crypto, DataFlow::SourceNode subtle,
+        DataFlow::SourceNode inner
+      |
+        window = DataFlow::globalVariable("window") and
+        crypto = window.getAPropertyRead("crypto") and
+        subtle = crypto.getAPropertyRead("subtle") and
+        function = subtle.getAMethodCall("importKey")
+        |
+        this = function.getArgument(1)
+
+        )
+    }
+    override string getAPIName(){
+      result = "W3C"
+    }
+
+    override DataFlow::CallNode getFunction(){
+      result = function
+    }
+  }
+
 }
