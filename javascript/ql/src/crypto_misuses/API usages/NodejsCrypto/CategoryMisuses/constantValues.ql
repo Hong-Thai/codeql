@@ -4,7 +4,6 @@ import semmle.javascript.security.SensitiveActions
 import DataFlow::PathGraph
 
 from Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink,
-  DataFlow::CallNode function_ref,
   Location reference1,
   Location reference2,
   string crypto_api_name, 
@@ -22,18 +21,17 @@ from Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink,
   string sink_path
 where
   cfg.hasFlowPath(source, sink) 
-  and crypto_api_name = "NodeJsCrypto"
-  and function_ref.getAnArgument() = sink.getNode()
-  and function_name = function_ref.getCalleeName()
+  and crypto_api_name = sink.getNode().(Sink).getAPIName()
+  and function_name = sink.getNode().(Sink).getFunction().getCalleeName()
   and function_category = ""
   and misuse_category = "Constant/Hardcoded values to sensitive functions"
   and reference1 = source.getNode().asExpr().getLocation()
   and reference2 = sink.getNode().asExpr().getLocation()
   and reference = reference1 + " -> " + reference2
   and path = reference1.getFile().getRelativePath() + " -> " + reference2.getFile().getRelativePath()
-  and ((source.getNode() instanceof HardcodedValuesSource and status = "MISUSE" and extra_information = source.toString() 
+  and (((source.getNode() instanceof HardcodedStringSource or source.getNode() instanceof HardcodedArrayBufferSource) and status = "MISUSE" and extra_information = source.toString() 
       and misuse_message = "The constant/hardcoded value: " + source + " flows into the sensitive function: " + sink + ". It is recommended to use freshly generated values for this.")
-   or (not source.getNode() instanceof HardcodedValuesSource and status = "WARNING" and extra_information = ""
+   or (not source.getNode() instanceof HardcodedStringSource and not source.getNode() instanceof HardcodedArrayBufferSource and status = "WARNING" and extra_information = ""
       and misuse_message = "A value read from a file using " + source + " flows into the sensitive function: " + sink + ". It is recommended to use freshly generated values for this."))
   and source_reference = reference1.toString()
   and sink_reference = reference2.toString()

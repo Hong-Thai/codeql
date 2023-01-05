@@ -8,12 +8,24 @@ import javascript
 private import semmle.javascript.security.SensitiveActions
 
 module ConstantValue {
+
+  boolean isHardcodedArray(ArrayExpr arr, int i) {
+    i in [0 .. arr.getSize()] and 
+    if arr.getSize() = 0 then result = false else
+    if arr.getSize() = i 
+        then result = true else 
+            if not arr.getElement(i) instanceof NumberLiteral 
+                then result = false
+                    else result = isHardcodedArray(arr, i+1)
+    
+}
+
+
   /**
    * 
    */
   abstract class Source extends DataFlow::Node {
-    /** Gets a string that describes the type of this data flow source. */
-    //abstract string describe();
+
   }
 
   /**
@@ -45,9 +57,29 @@ module ConstantValue {
     }
   }
 
-  class HardcodedValuesSource extends Source {
-    HardcodedValuesSource() {
+  class HardcodedStringSource extends Source {
+    HardcodedStringSource() {
       this.asExpr() instanceof ConstantString
+    }
+  }
+
+  class NumberSource extends DataFlow::SourceNode::Range {
+    NumberSource(){
+        exists( NumberLiteral num | 
+            this.asExpr() =  num
+            )
+        
+    }
+  }
+
+  class HardcodedArrayBufferSource extends Source {
+    HardcodedArrayBufferSource(){
+    exists(ArrayExpr num, DataFlow::InvokeNode src | 
+      isHardcodedArray(num, 0) = true 
+      and src.getCalleeName() = "Uint"+[8, 16, 32, 64]+"Array" 
+      and src.getArgument(0).asExpr() = num
+      | 
+      this = src)
     }
   }
 
@@ -146,15 +178,14 @@ module ConstantValue {
 
     W3CConstantValueSink(){
       exists(
-        DataFlow::SourceNode window, DataFlow::SourceNode crypto, DataFlow::SourceNode subtle,
-        DataFlow::SourceNode inner
+        DataFlow::SourceNode window, DataFlow::SourceNode crypto, DataFlow::SourceNode subtle
       |
         window = DataFlow::globalVariable("window") and
         crypto = window.getAPropertyRead("crypto") and
         subtle = crypto.getAPropertyRead("subtle") and
-        function = subtle.getAMethodCall("importKey")
+        function = subtle.getAMethodCall("deriveBits")
         |
-        this = function.getArgument(1)
+        this = function.getOptionArgument(0, "salt")
 
         )
     }
