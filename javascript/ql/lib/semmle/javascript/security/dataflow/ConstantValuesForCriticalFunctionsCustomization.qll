@@ -83,6 +83,15 @@ module ConstantValue {
     }
   }
 
+  class HardcodedArraySource extends Source {
+    HardcodedArraySource(){
+    exists(ArrayExpr num | 
+      isHardcodedArray(num, 0) = true 
+      | 
+      this.asExpr() = num)
+    }
+  }
+
   class ConstantValuesReadAsyncSource extends Source {
     ConstantValuesReadAsyncSource() {
       exists(DataFlow::SourceNode fs, DataFlow::FunctionNode callback, DataFlow::Node param|
@@ -183,10 +192,27 @@ module ConstantValue {
         window = DataFlow::globalVariable("window") and
         crypto = window.getAPropertyRead("crypto") and
         subtle = crypto.getAPropertyRead("subtle") and
-        function = subtle.getAMethodCall("deriveBits")
+        (
+          function = subtle.getAMethodCall("deriveBits")
+          or
+          function = subtle.getAMethodCall("deriveKey")
+          or
+          function = subtle.getAMethodCall("encrypt")
+          or
+          function = subtle.getAMethodCall("deriveBits")
+          or
+          function = subtle.getAMethodCall("wrapKey")
+        )
         |
         this = function.getOptionArgument(0, "salt")
-
+          or
+        this = function.getOptionArgument(0, "iv")
+          or
+        this = function.getOptionArgument(0, "counter")
+          or
+        this = function.getOptionArgument(3, "iv")
+          or
+        this = function.getOptionArgument(3, "counter")
         )
     }
     override string getAPIName(){

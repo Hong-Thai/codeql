@@ -29,9 +29,10 @@ where
   and reference2 = sink.getNode().asExpr().getLocation()
   and reference = reference1 + " -> " + reference2
   and path = reference1.getFile().getRelativePath() + " -> " + reference2.getFile().getRelativePath()
-  and (((source.getNode() instanceof HardcodedStringSource or source.getNode() instanceof HardcodedArrayBufferSource) and status = "MISUSE" and extra_information = source.toString() 
+  and (((
+    source.getNode() instanceof HardcodedStringSource or source.getNode() instanceof HardcodedArrayBufferSource or source.getNode() instanceof HardcodedArraySource) and status = "MISUSE" and extra_information = source.toString() 
       and misuse_message = "The constant/hardcoded value: " + source + " flows into the sensitive function: " + sink + ". It is recommended to use freshly generated values for this.")
-   or (not source.getNode() instanceof HardcodedStringSource and not source.getNode() instanceof HardcodedArrayBufferSource and status = "WARNING" and extra_information = ""
+   or (not source.getNode() instanceof HardcodedStringSource and not source.getNode() instanceof HardcodedArrayBufferSource and not source.getNode() instanceof HardcodedArraySource and status = "WARNING" and extra_information = ""
       and misuse_message = "A value read from a file using " + source + " flows into the sensitive function: " + sink + ". It is recommended to use freshly generated values for this."))
   and source_reference = reference1.toString()
   and sink_reference = reference2.toString()
