@@ -80,19 +80,58 @@ module AlgorithmToArgument {
     DataFlow::CallNode function;
 
     W3CNoWindowAlgorithmSink() {
-      exists(DataFlow::SourceNode crypto, DataFlow::SourceNode subtle |
+      exists(DataFlow::SourceNode crypto, DataFlow::SourceNode subtle, DataFlow::SourceNode inner |
         crypto = DataFlow::globalVariable("crypto") and
         subtle = crypto.getAPropertyRead("subtle") and
         (
-          function = subtle.getAMemberCall("digest") and
-          this = function.getArgument(0)
-          or
+          // Functions with "hash" as the first OptionArgument
           (
             function = subtle.getAMemberCall("deriveBits")
             or
             function = subtle.getAMemberCall("deriveKey")
+            or
+            function = subtle.getAMemberCall("generateKey")
+            or
+            function = subtle.getAMemberCall("sign")
+            or
+            function = subtle.getAMemberCall("verify")
           ) and
-          this = function.getOptionArgument(0, "hash")
+          (
+            this = function.getOptionArgument(0, "hash")
+            or
+            inner = function.getOptionArgument(0, "hash") and
+            this = inner.getAPropertyWrite("name").getRhs()
+          )
+          or
+          // Functions with hash as the first argument
+          (
+            function = subtle.getAMemberCall("digest") and
+            this = function.getArgument(0)
+          )
+          or
+          // Functions with "hash" as the third OptionArgument
+          (
+            function = subtle.getAMemberCall("importKey") 
+            and
+            (
+              this = function.getOptionArgument(2, "hash")
+              or
+              inner = function.getOptionArgument(2, "hash") and
+              this = inner.getAPropertyWrite("name").getRhs()
+            )
+          )
+          or
+          // Functions with "hash" as the fifth OptionArgument
+          (
+            function = subtle.getAMemberCall("unwrapKey") 
+            and
+            (
+              this = function.getOptionArgument(4, "hash")
+              or
+              inner = function.getOptionArgument(4, "hash") and
+              this = inner.getAPropertyWrite("name").getRhs()
+            )
+          )
         )
       )
     }
