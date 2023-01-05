@@ -50,5 +50,4 @@ extra_information,
 source_reference, 
 sink_reference, 
 source_path, 
-sink_path,
-sink
+sink_path
