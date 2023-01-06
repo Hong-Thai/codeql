@@ -202,6 +202,8 @@ module ConstantValue {
           function = subtle.getAMethodCall("deriveBits")
           or
           function = subtle.getAMethodCall("wrapKey")
+          or
+          function = subtle.getAMethodCall("unwrapKey")
         )
         |
         this = function.getOptionArgument(0, "salt")
