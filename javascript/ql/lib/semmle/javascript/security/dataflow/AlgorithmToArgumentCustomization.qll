@@ -210,22 +210,5 @@ module AlgorithmToArgument {
     override DataFlow::CallNode getFunction() { result = function }
   }
 }
-/*
- *   exists(DataFlow::SourceNode mod,
- *          DataFlow::SourceNode crypto,
- *          DataFlow::SourceNode subtle|
- *
- *          mod = DataFlow::globalVariable("window")
- *          and crypto = mod.getAPropertyRead("crypto")
- *          and subtle = crypto.getAPropertyRead("subtle")
- *          and
- *          (this = subtle.getAMemberCall("deriveBits")
- *          and algorithm.matchesName(this.getOptionArgument(0, "hash").getStringValue())
- *          or
- *          this = subtle.getAMemberCall("deriveKey")
- *          and (algorithm.matchesName(this.getOptionArgument(0, "hash").getStringValue()) or algorithm.matchesName(this.getOptionArgument(2, "hash").getStringValue()))
- *          )
- *        )
- *    }
- */
+
 

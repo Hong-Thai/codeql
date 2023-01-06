@@ -1,7 +1,10 @@
 import javascript
 
 from DataFlow::SourceNode mod, DataFlow::CallNode call, DataFlow::SourceNode crypto, DataFlow::SourceNode subtle, string crypto_api_name, string function_name, Location reference, string description, string path, int numArgs, string arg0, string arg1, string arg2, string arg3, string arg4, string arg5, string arg6
-where mod = DataFlow::globalVariable("window") and crypto = mod.getAPropertyRead("crypto") and subtle = crypto.getAPropertyRead("subtle")
+where 
+((mod = DataFlow::globalVariable("window") and crypto = mod.getAPropertyRead("crypto") and subtle = crypto.getAPropertyRead("subtle"))
+or
+(crypto = DataFlow::globalVariable("crypto") and subtle = crypto.getAPropertyRead("subtle")))
 and call = subtle.getAMethodCall()
 and crypto_api_name = "WebCryptoAPI" and function_name = call.getCalleeName()
 and reference = call.asExpr().getLocation()
