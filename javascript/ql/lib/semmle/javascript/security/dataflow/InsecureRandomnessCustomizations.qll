@@ -6,27 +6,28 @@
 
 import javascript
 private import semmle.javascript.security.SensitiveActions
+private import semmle.javascript.security.dataflow.ConstantValuesForCriticalFunctionsCustomization::ConstantValue
 
 module InsecureRandomness {
   /**
    * A data flow source for random values that are not cryptographically secure.
    */
-  abstract class Source extends DataFlow::Node { }
+  abstract class RandSource extends DataFlow::Node { }
 
   /**
    * A data flow sink for random values that are not cryptographically secure.
    */
-  abstract class Sink extends DataFlow::Node { }
+  abstract class RandSink extends DataFlow::Node { }
 
   /**
    * A sanitizer for random values that are not cryptographically secure.
    */
-  abstract class Sanitizer extends DataFlow::Node { }
+  abstract class RandSanitizer extends DataFlow::Node { }
 
   /**
    * A simple random number generator that is not cryptographically secure.
    */
-  class DefaultSource extends Source, DataFlow::ValueNode {
+  class DefaultSource extends RandSource, DataFlow::ValueNode {
     override InvokeExpr astNode;
 
     DefaultSource() {
@@ -78,7 +79,7 @@ module InsecureRandomness {
    * A sensitive write, considered as a sink for random values that are not cryptographically
    * secure.
    */
-  class SensitiveWriteSink extends Sink {
+  class SensitiveWriteSink extends RandSink {
     SensitiveWriteSink() { this instanceof SensitiveWrite }
   }
 
@@ -86,8 +87,14 @@ module InsecureRandomness {
    * A cryptographic key, considered as a sink for random values that are not cryptographically
    * secure.
    */
-  class CryptoKeySink extends Sink {
+  class CryptoKeySink extends RandSink {
     CryptoKeySink() { this instanceof CryptographicKey }
+  }
+
+  class NonceSink extends RandSink {
+    NonceSink(){
+      this instanceof Sink
+    }
   }
 
   /**

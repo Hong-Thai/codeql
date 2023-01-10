@@ -18,18 +18,18 @@ private import InsecureRandomnessCustomizations::InsecureRandomness as InsecureR
 class Configuration extends TaintTracking::Configuration {
   Configuration() { this = "InsecureRandomness" }
 
-  override predicate isSource(DataFlow::Node source) { source instanceof Source }
+  override predicate isSource(DataFlow::Node source) { source instanceof RandSource }
 
-  override predicate isSink(DataFlow::Node sink) { sink instanceof Sink }
+  override predicate isSink(DataFlow::Node sink) { sink instanceof RandSink }
 
   override predicate isSanitizer(DataFlow::Node node) {
     // not making use of `super.isSanitizer`: those sanitizers are not for this kind of data
-    node instanceof Sanitizer
+    node instanceof RandSanitizer
   }
 
   override predicate isSanitizerEdge(DataFlow::Node pred, DataFlow::Node succ) {
     // stop propagation at the sinks to avoid double reporting
-    pred instanceof Sink and
+    pred instanceof RandSink and
     // constrain succ
     pred = succ.getAPredecessor()
   }
