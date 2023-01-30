@@ -24,8 +24,8 @@ where
     size < 1000 and
     misuse_message = "deriveBits uses PBKDF2 with then 1000 iterations ("+ size + "). Don't use this as a key for encryption" )
     and reference = deriveBits.asExpr().getLocation()
-    and crypto_api_name = "W3C"
-    and function_name = "deriveBits"
+    and crypto_api_name = deriveBits.getAPIName()
+    and function_name = deriveBits.getFunctionName()
     and function_category = "KeyCreation"
     and misuse_category = "Short number"
     and status = "WARNING"

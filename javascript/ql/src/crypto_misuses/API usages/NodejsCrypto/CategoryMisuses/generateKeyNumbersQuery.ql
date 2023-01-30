@@ -25,8 +25,8 @@ where
     misuse_message = "generateKey uses HMAC with length less then 128 bits ("+ size + "). This is considered dangerous and should not be used for encryption. Eighter omit length or keep is at least 128 bits"
     )
     and reference = generateKey.asExpr().getLocation()
-    and crypto_api_name = "W3C"
-    and function_name = "generateKey"
+    and crypto_api_name = generateKey.getAPIName()
+    and function_name = generateKey.getFunctionName()
     and function_category = "KeyCreation"
     and misuse_category = "Short number"
     and status = "MISUSE"

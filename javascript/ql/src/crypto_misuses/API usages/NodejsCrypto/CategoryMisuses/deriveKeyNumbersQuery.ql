@@ -20,8 +20,8 @@ where
     size < 1000 and
     misuse_message = "deriveKey uses PBKDF2 with then 1000 iterations ("+ size + "). This is considered dangerous and should not be used for encryption."
     and reference = deriveKey.asExpr().getLocation()
-    and crypto_api_name = "W3C"
-    and function_name = "deriveKey"
+    and crypto_api_name = deriveKey.getAPIName()
+    and function_name = deriveKey.getFunctionName()
     and function_category = "KeyCreation"
     and misuse_category = "Short number"
     and status = "MISUSE"
