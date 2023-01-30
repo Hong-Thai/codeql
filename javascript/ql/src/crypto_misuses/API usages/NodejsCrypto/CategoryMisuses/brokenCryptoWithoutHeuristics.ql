@@ -25,7 +25,16 @@ where
   cfg.hasFlowPath(source, sink)
   and source.getNode() instanceof BrokenAlgorithmSource
   and crypto_api_name = sink.getNode().(Sink).getAPIName()
-  and function_name = sink.getNode().(Sink).getFunction().getCalleeName()
+  and
+  (
+  sink.getNode() instanceof NodeJSWebCryptoAPISink
+  and
+  function_name = "webcrypto.subtle." + sink.getNode().(Sink).getFunction().getCalleeName()
+  or
+  not sink.getNode() instanceof NodeJSWebCryptoAPISink
+  and
+  function_name = sink.getNode().(Sink).getFunction().getCalleeName()
+  )
   and function_category = ""
   and misuse_category = "Broken crypto algorithm"
   and reference1 = source.getNode().asExpr().getLocation()

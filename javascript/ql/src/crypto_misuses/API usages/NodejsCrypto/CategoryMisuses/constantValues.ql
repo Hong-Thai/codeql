@@ -22,7 +22,16 @@ from Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink,
 where
   cfg.hasFlowPath(source, sink) 
   and crypto_api_name = sink.getNode().(Sink).getAPIName()
-  and function_name = sink.getNode().(Sink).getFunction().getCalleeName()
+  and
+  (
+    sink.getNode() instanceof ConstantNodeJSCryptoWebCryptoAPISink
+    and
+    function_name = "webcrypto.subtle." + sink.getNode().(Sink).getFunction().getCalleeName()
+    or
+    not sink.getNode() instanceof ConstantNodeJSCryptoWebCryptoAPISink
+    and
+    function_name = sink.getNode().(Sink).getFunction().getCalleeName()
+  )
   and function_category = ""
   and misuse_category = "Constant/Hardcoded values to sensitive functions"
   and reference1 = source.getNode().asExpr().getLocation()

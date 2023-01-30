@@ -226,4 +226,47 @@ module ConstantValue {
     }
   }
 
+  class ConstantNodeJSCryptoWebCryptoAPISink extends Sink {
+    DataFlow::CallNode function;
+
+    ConstantNodeJSCryptoWebCryptoAPISink(){
+      exists(
+        DataFlow::SourceNode crypto, DataFlow::SourceNode subtle
+      |
+        crypto = DataFlow::moduleImport("crypto") and
+        subtle = crypto.getAPropertyRead("webcrypto").getAPropertyRead("subtle") and
+        (
+          function = subtle.getAMethodCall("deriveBits")
+          or
+          function = subtle.getAMethodCall("deriveKey")
+          or
+          function = subtle.getAMethodCall("encrypt")
+          or
+          function = subtle.getAMethodCall("deriveBits")
+          or
+          function = subtle.getAMethodCall("wrapKey")
+          or
+          function = subtle.getAMethodCall("unwrapKey")
+        )
+        |
+        this = function.getOptionArgument(0, "salt")
+          or
+        this = function.getOptionArgument(0, "iv")
+          or
+        this = function.getOptionArgument(0, "counter")
+          or
+        this = function.getOptionArgument(3, "iv")
+          or
+        this = function.getOptionArgument(3, "counter")
+        )
+    }
+    override string getAPIName(){
+      result = "NodeJSCrypto"
+    }
+
+    override DataFlow::CallNode getFunction(){
+      result = function
+    }
+  }
+
 }
