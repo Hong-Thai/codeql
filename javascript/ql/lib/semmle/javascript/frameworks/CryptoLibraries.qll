@@ -186,6 +186,66 @@ private module NodeJSCrypto {
         and
         algorithm.matchesName(source.getAlgorithm().toString())
       )
+      or
+      exists(DataFlow::SourceNode crypto, DataFlow::SourceNode subtle, DataFlow::SourceNode inner,
+        AlgorithmToArgument::Sink sink,
+        AlgorithmToArgument::Source source , DataFlow::SourceNode tmp|
+        crypto = DataFlow::moduleImport("crypto") and
+        subtle = crypto.getAPropertyRead("webcrypto").getAPropertyRead("subtle") and
+        (
+          // Functions with "hash" as the first OptionArgument
+          (
+            this = subtle.getAMemberCall("deriveBits")
+            or
+            this = subtle.getAMemberCall("deriveKey")
+            or
+            this = subtle.getAMemberCall("generateKey")
+            or
+            this = subtle.getAMemberCall("sign")
+            or
+            this = subtle.getAMemberCall("verify")
+          ) and
+          (
+            sink = this.getOptionArgument(0, "hash")
+            or
+            inner = this.getOptionArgument(0, "hash") and
+            sink = inner.getAPropertyWrite("name").getRhs()
+          )
+          or
+          // Functions with hash as the first argument
+          (
+            this = subtle.getAMemberCall("digest") and
+            sink = this.getArgument(0)
+          )
+          or
+          // Functions with "hash" as the third OptionArgument
+          (
+            this = subtle.getAMemberCall("importKey") 
+            and
+            (
+              sink = this.getOptionArgument(2, "hash")
+              or
+              inner = this.getOptionArgument(2, "hash") and
+              sink = inner.getAPropertyWrite("name").getRhs()
+            )
+          )
+          or
+          // Functions with "hash" as the fifth OptionArgument
+          (
+            this = subtle.getAMemberCall("unwrapKey") 
+            and
+            (
+              sink = this.getOptionArgument(4, "hash")
+              or
+              inner = this.getOptionArgument(4, "hash") and
+              sink = inner.getAPropertyWrite("name").getRhs()
+            )
+          )
+        )
+        and tmp = source
+        and tmp.flowsTo(sink)
+        and algorithm.matchesName(source.getAlgorithm().toString())
+      )
     }
 
     CryptographicAlgorithm getAlgorithm() { result = algorithm }
