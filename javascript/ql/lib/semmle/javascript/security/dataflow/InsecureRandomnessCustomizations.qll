@@ -91,12 +91,6 @@ module InsecureRandomness {
     CryptoKeySink() { this instanceof CryptographicKey }
   }
 
-  class NonceSink extends RandSink {
-    NonceSink(){
-      this instanceof Sink
-    }
-  }
-
   /**
    * Holds if the step `pred` -> `succ` is an additional taint-step for random values that are not cryptographically secure.
    */
