@@ -45,17 +45,6 @@ module ConstantValue {
   /**
    * 
    */
-  class FSReadValuesSource extends Source {
-    FSReadValuesSource() {
-      exists(DataFlow::SourceNode fs, DataFlow::CallNode node |
-        fs = DataFlow::moduleImport("fs") 
-        and
-        node = fs.getAMemberCall("readFile"+["","Sync"])
-        |
-        this = node
-      )
-    }
-  }
 
   class HardcodedStringSource extends Source {
     HardcodedStringSource() {
@@ -91,22 +80,7 @@ module ConstantValue {
       this.asExpr() = num)
     }
   }
-
-  class ConstantValuesReadAsyncSource extends Source {
-    ConstantValuesReadAsyncSource() {
-      exists(DataFlow::SourceNode fs, DataFlow::FunctionNode callback, DataFlow::Node param|
-        fs = DataFlow::moduleImport("fs") 
-        and
-        callback = fs.getAMemberCall("readFile").getArgument(2)
-        and
-        param = callback.getParameter(1)
-        |
-        this = param
-      )
-    }
-  }
   
-
   class ConstantValuesSink extends Sink {
     DataFlow::CallNode node;
     ConstantValuesSink(){
