@@ -19,7 +19,13 @@ module BrokenCryptoAlgorithm {
   /**
    * A data flow sink for sensitive information in broken or weak cryptographic algorithms.
    */
-  abstract class Sink extends DataFlow::Node { }
+  abstract class Sink extends DataFlow::Node {
+
+    abstract string getFunctionName();
+
+    abstract string getAlgorithm();
+
+  }
 
   /**
    * A sanitizer for sensitive information in broken or weak cryptographic algorithms.
@@ -38,11 +44,21 @@ module BrokenCryptoAlgorithm {
    * An expression used by a broken or weak cryptographic algorithm.
    */
   class WeakCryptographicOperationSink extends Sink {
+    string function_name;
+    string algorithm;
     WeakCryptographicOperationSink() {
       exists(CryptographicOperation application |
         application.getAlgorithm().isWeak() and
         this = application.getInput()
+        and
+        function_name = application.getFunctionName()
+        and
+        algorithm = application.getAlgorithm().toString()
       )
     }
+
+    override string getFunctionName() { result = function_name }
+
+    override string getAlgorithm() { result = algorithm }
   }
 }

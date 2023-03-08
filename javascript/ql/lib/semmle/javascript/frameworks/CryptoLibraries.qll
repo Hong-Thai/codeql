@@ -19,6 +19,10 @@ abstract class CryptographicOperation extends DataFlow::Node {
    * Gets the applied algorithm.
    */
   abstract CryptographicAlgorithm getAlgorithm();
+
+  string getFunctionName(){
+    result = ""
+  }
 }
 
 /**
@@ -142,6 +146,7 @@ private module BrowserIdCrypto {
 private module NodeJSCrypto {
   private class InstantiatedAlgorithm extends DataFlow::CallNode {
     CryptographicAlgorithm algorithm; // non-functional
+    string function_name;
 
     InstantiatedAlgorithm() {
       /*
@@ -157,7 +162,7 @@ private module NodeJSCrypto {
        *       Also matches `createHash`, `createHmac`, `createSign` instead of `createCipher`.
        */
 
-      exists(DataFlow::SourceNode mod,
+      (exists(DataFlow::SourceNode mod,
          AlgorithmToArgument::Sink sink,
           AlgorithmToArgument::Source source, 
           DataFlow::SourceNode tmp|
@@ -245,10 +250,13 @@ private module NodeJSCrypto {
         and tmp = source
         and tmp.flowsTo(sink)
         and algorithm.matchesName(source.getAlgorithm().toString())
-      )
+      ))
+      and function_name = this.getCalleeName()
     }
 
     CryptographicAlgorithm getAlgorithm() { result = algorithm }
+
+    string getFunctionName() { result = function_name }
   }
 
   private class CreateKey extends CryptographicKeyCreation, DataFlow::CallNode {
@@ -376,6 +384,8 @@ private module NodeJSCrypto {
     override DataFlow::Node getInput() { result = super.getArgument(0) }
 
     override CryptographicAlgorithm getAlgorithm() { result = instantiation.getAlgorithm() }
+
+    override string getFunctionName() { result = instantiation.getFunctionName()}
   }
 
   private class CryptoFunctions extends CryptographicOperation instanceof DataFlow::MethodCallNode {

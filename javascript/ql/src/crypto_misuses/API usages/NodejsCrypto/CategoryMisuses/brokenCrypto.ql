@@ -6,7 +6,6 @@ import semmle.javascript.security.SensitiveActions
 import DataFlow::PathGraph
 
 from Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink,
-DataFlow::CallNode function_ref,
   Location reference1,
   Location reference2,
   string crypto_api_name, 
@@ -23,11 +22,9 @@ DataFlow::CallNode function_ref,
   string source_path,
   string sink_path
 where
-  cfg.hasFlowPath(source, sink) and
-  not source.getNode() instanceof CleartextPasswordExpr // flagged by js/insufficient-password-hash
+  cfg.hasFlowPath(source, sink)
   and crypto_api_name = "NodeJsCrypto"
-  and function_ref.getAnArgument() = sink.getNode()
-  and function_name = function_ref.getCalleeName()
+  and function_name = sink.getNode().(Sink).getFunctionName()
   and function_category = ""
   and misuse_category = "Broken crypto algorithm"
   and reference1 = source.getNode().asExpr().getLocation()
@@ -36,7 +33,7 @@ where
   and path = reference1.getFile().getRelativePath() + " -> " + reference2.getFile().getRelativePath()
   and misuse_message = "A broken or weak cryptographic algorithm depends on sensitive data from" + source.getNode().(Source).describe()
   and status = "MISUSE"
-  and extra_information = ""
+  and extra_information = "FILE:brokenCrypto.ql;ALGORITHM:"+sink.getNode().(Sink).getAlgorithm()
   and source_reference = reference1.toString()
   and sink_reference = reference2.toString()
   and source_path = reference1.getFile().getRelativePath()
