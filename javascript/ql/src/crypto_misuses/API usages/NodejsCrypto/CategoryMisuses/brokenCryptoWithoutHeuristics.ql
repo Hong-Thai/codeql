@@ -43,7 +43,7 @@ where
   and path = reference1.getFile().getRelativePath() + " -> " + reference2.getFile().getRelativePath()
   and misuse_message = function_name+ " uses an insecure cryptographic algorithm."
   and status = "WARNING"
-  and extra_information = ""
+  and extra_information = "FILE:brokenCryptoWithoutHeuristics.ql;ALGORITHM:"+source.getNode().(Source).getAlgorithm().toString()
   and source_reference = reference1.toString()
   and sink_reference = reference2.toString()
   and source_path = reference1.getFile().getRelativePath()
