@@ -44,7 +44,7 @@ where
     and status = "MISUSE"
     and path = reference.getFile().getRelativePath()
     and extra_information = algo +";"+ size
-    and source_reference = ""
+    and source_reference = "FILE:keySize.ql;SIZE:"+size
     and sink_reference = reference.toString()
     and source_path = ""
     and sink_path = path

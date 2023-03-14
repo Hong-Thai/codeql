@@ -31,7 +31,7 @@ where
     and misuse_category = "Short number"
     and status = "MISUSE"
     and path = reference.getFile().getRelativePath()
-    and extra_information = ""
+    and extra_information = "FILE:generateKeyNumbersQuery.ql;SIZE:"+size
     and source_reference = ""
     and sink_reference = reference.toString()
     and source_path = ""
