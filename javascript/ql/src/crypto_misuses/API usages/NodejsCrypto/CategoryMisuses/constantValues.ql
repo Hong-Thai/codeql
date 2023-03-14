@@ -38,7 +38,7 @@ where
   and reference2 = sink.getNode().asExpr().getLocation()
   and reference = reference1 + " -> " + reference2
   and path = reference1.getFile().getRelativePath() + " -> " + reference2.getFile().getRelativePath()
-  and status = "MISUSE" and extra_information = source.toString() 
+  and status = "MISUSE" and extra_information = "FILE:constantValues.ql;VALUE:"+source.toString() 
   and misuse_message = "The constant/hardcoded value: " + source + " flows into the sensitive function: " + sink + ". It is recommended to use freshly generated values for this." 
   and source_reference = reference1.toString()
   and sink_reference = reference2.toString()

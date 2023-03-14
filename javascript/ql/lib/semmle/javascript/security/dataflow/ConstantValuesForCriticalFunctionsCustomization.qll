@@ -48,7 +48,7 @@ module ConstantValue {
 
   class HardcodedStringSource extends Source {
     HardcodedStringSource() {
-      this.asExpr() instanceof ConstantString
+      this.asExpr() instanceof StringLiteral
     }
   }
 
