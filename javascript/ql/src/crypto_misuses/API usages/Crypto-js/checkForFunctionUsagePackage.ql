@@ -1,7 +1,8 @@
 import javascript
 
-from DataFlow::SourceNode mod, DataFlow::CallNode call_node, DataFlow::CallNode call, string crypto_api_name, string function_name, Location reference, string description, string path, int numArgs, string arg0, string arg1, string arg2, string arg3, string arg4, string arg5, string arg6
-where mod = DataFlow::moduleImport("crypto-js/"+["md5",
+from DataFlow::SourceNode mod, DataFlow::CallNode call_node, DataFlow::CallNode call, string crypto_api_name, string function_name, Location reference, string description, string path, int numArgs, string arg0, string arg1, string arg2, string arg3, string arg4, string arg5, string arg6, string import_name
+where 
+import_name = "crypto-js/"+["md5",
 "sha1",
 "sha256",
 "sha224",
@@ -28,10 +29,11 @@ where mod = DataFlow::moduleImport("crypto-js/"+["md5",
 "mode-ctr",
 "mode-ctr-gladman",
 "mode-ofb",
-"mode-ecb"]) and call_node = mod
+"mode-ecb"]
+and mod = DataFlow::moduleImport(import_name) and call_node = mod
 and crypto_api_name = "crypto-js" 
 and call = call_node.getACall()
-and function_name = call.getCalleeName()
+and function_name = import_name
 and reference = call.asExpr().getLocation()
 and description = "Usage of " + function_name + " from the following API: " + crypto_api_name
 and numArgs = call.getNumArgument()
