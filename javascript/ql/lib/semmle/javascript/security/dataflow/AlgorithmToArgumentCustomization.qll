@@ -48,7 +48,7 @@ module AlgorithmToArgument {
     BrokenAlgorithmSource() {
       this.asExpr() instanceof ConstantString and
       algorithm.matchesName(this.getStringValue()) and
-      algorithm.isWeak()
+      (algorithm.isWeak() or this.getStringValue().matches("%ECB%") or this.getStringValue().matches("%ecb%"))
     }
 
     override CryptographicAlgorithm getAlgorithm() { result = algorithm }
