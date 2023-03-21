@@ -5,6 +5,7 @@ import WebCryptoAPIUsage
 import BcryptUsage
 import BrowserIdCryptoUsage
 import CrypticoUsage
+import CryptoJSUsage
 
 from CryptoAPIUsage usage, string crypto_api_name, string function_name, Location reference, string description, string path, int numArgs, string arg0, string arg1, string arg2, string arg3, string arg4, string arg5, string arg6
 where crypto_api_name = usage.getCryptoAPIName()
