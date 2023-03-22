@@ -2,15 +2,22 @@ import javascript
 
 module Utils {
     predicate hasPropertyRead(DataFlow::SourceNode src) {
+        exists(DataFlow::SourceNode here | here = src)
+        and
         exists(DataFlow::SourceNode succ |
             src.getAPropertyRead() = succ
         )
     }
-    
-    string getPropertiesAll(DataFlow::SourceNode src) {
-        if hasPropertyRead(src)
-        then result = describeExpression(src.asExpr()).substring(17,describeExpression(src.asExpr()).length()-1)+"."+getPropertiesAll(src.getAPropertyRead())
+
+    string getPropertiesAll_(DataFlow::SourceNode src, int i) {
+        i in [0..20] and
+        if hasPropertyRead(src) and i < 20
+        then result = describeExpression(src.asExpr()).substring(17,describeExpression(src.asExpr()).length()-1)+"."+getPropertiesAll_(src.getAPropertyRead(), i+1)
         else
         result = describeExpression(src.asExpr()).substring(17,describeExpression(src.asExpr()).length()-1)
+    }
+    
+    string getPropertiesAll(DataFlow::SourceNode src) {
+        result = getPropertiesAll_(src, 0)
     }
 }
