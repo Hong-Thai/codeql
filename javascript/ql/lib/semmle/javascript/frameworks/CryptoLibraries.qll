@@ -251,7 +251,7 @@ private module NodeJSCrypto {
         and tmp.flowsTo(sink)
         and algorithm.matchesName(source.getAlgorithm().toString())
       ))
-      and function_name = this.getCalleeName()
+      and function_name = ""
     }
 
     CryptographicAlgorithm getAlgorithm() { result = algorithm }
