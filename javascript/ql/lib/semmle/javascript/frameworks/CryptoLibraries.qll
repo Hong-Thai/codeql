@@ -162,34 +162,19 @@ private module NodeJSCrypto {
        *       Also matches `createHash`, `createHmac`, `createSign` instead of `createCipher`.
        */
 
-      (exists(DataFlow::SourceNode mod,
-         AlgorithmToArgument::Sink sink,
-          AlgorithmToArgument::Source source, 
-          DataFlow::SourceNode tmp|
+      (exists(DataFlow::SourceNode mod|
         mod = DataFlow::moduleImport("crypto") and
         (this = mod.getAMemberCall("create" + ["Hash", "Hmac", "Sign", "Cipher", "Cipheriv"]) or 
           this = mod.getAMemberCall(["hkdf", "hkdfSync"])
         ) and
-
-        sink = this.getArgument(0)
-        and tmp = source
-        and tmp.flowsTo(sink)
-        and
-        algorithm.matchesName(source.getAlgorithm().toString())
+        algorithm.matchesName(this.getArgument(0).getStringValue())
       )
       or
-      exists(DataFlow::SourceNode mod, 
-        AlgorithmToArgument::Sink sink,
-        AlgorithmToArgument::Source source, 
-        DataFlow::SourceNode tmp|
+      exists(DataFlow::SourceNode mod|
         mod = DataFlow::moduleImport("crypto") and
         this = mod.getAMemberCall(["pbkdf2", "pbkdf2Sync"])
         and
-        sink = this.getArgument(4)
-        and tmp = source
-        and tmp.flowsTo(sink)
-        and
-        algorithm.matchesName(source.getAlgorithm().toString())
+        algorithm.matchesName(this.getArgument(4).getStringValue())
       )
       or
       exists(DataFlow::SourceNode crypto, DataFlow::SourceNode subtle, DataFlow::SourceNode inner,
