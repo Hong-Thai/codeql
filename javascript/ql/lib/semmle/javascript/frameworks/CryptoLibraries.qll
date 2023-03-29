@@ -177,9 +177,7 @@ private module NodeJSCrypto {
         algorithm.matchesName(this.getArgument(4).getStringValue())
       )
       or
-      exists(DataFlow::SourceNode crypto, DataFlow::SourceNode subtle, DataFlow::SourceNode inner,
-        AlgorithmToArgument::Sink sink,
-        AlgorithmToArgument::Source source , DataFlow::SourceNode tmp|
+      exists(DataFlow::SourceNode crypto, DataFlow::SourceNode subtle|
         crypto = DataFlow::moduleImport("crypto") and
         subtle = crypto.getAPropertyRead("webcrypto").getAPropertyRead("subtle") and
         (
@@ -196,16 +194,18 @@ private module NodeJSCrypto {
             this = subtle.getAMemberCall("verify")
           ) and
           (
-            sink = this.getOptionArgument(0, "hash")
-            or
-            inner = this.getOptionArgument(0, "hash") and
-            sink = inner.getAPropertyWrite("name").getRhs()
+            algorithm.matchesName(this.getOptionArgument(0, "hash").getStringValue())
+            // sink = this.getOptionArgument(0, "hash")
+            // or
+            // inner = this.getOptionArgument(0, "hash") and
+            // sink = inner.getAPropertyWrite("name").getRhs()
           )
           or
           // Functions with hash as the first argument
           (
             this = subtle.getAMemberCall("digest") and
-            sink = this.getArgument(0)
+            algorithm.matchesName(this.getArgument(0).getStringValue())
+            //sink = this.getArgument(0)
           )
           or
           // Functions with "hash" as the third OptionArgument
@@ -213,10 +213,11 @@ private module NodeJSCrypto {
             this = subtle.getAMemberCall("importKey") 
             and
             (
-              sink = this.getOptionArgument(2, "hash")
-              or
-              inner = this.getOptionArgument(2, "hash") and
-              sink = inner.getAPropertyWrite("name").getRhs()
+              algorithm.matchesName(this.getOptionArgument(2, "hash").getStringValue())
+              // sink = this.getOptionArgument(2, "hash")
+              // or
+              // inner = this.getOptionArgument(2, "hash") and
+              // sink = inner.getAPropertyWrite("name").getRhs()
             )
           )
           or
@@ -225,16 +226,16 @@ private module NodeJSCrypto {
             this = subtle.getAMemberCall("unwrapKey") 
             and
             (
-              sink = this.getOptionArgument(4, "hash")
-              or
-              inner = this.getOptionArgument(4, "hash") and
-              sink = inner.getAPropertyWrite("name").getRhs()
+              algorithm.matchesName(this.getOptionArgument(4, "hash").getStringValue())
+              // or
+              // inner = this.getOptionArgument(4, "hash") and
+              // sink = inner.getAPropertyWrite("name").getRhs()
             )
           )
         )
-        and tmp = source
-        and tmp.flowsTo(sink)
-        and algorithm.matchesName(source.getAlgorithm().toString())
+        // and tmp = source
+        // and tmp.flowsTo(sink)
+        // and algorithm.matchesName(source.getAlgorithm().toString())
       ))
       and function_name = ""
     }
