@@ -40,7 +40,8 @@ and crypto_api_name = ""
   and sink_reference = reference2.toString()
   and source_path = reference1.getFile().getRelativePath()
   and sink_path = reference2.getFile().getRelativePath()
-select crypto_api_name,
+select sink.getNode(), source, sink, 
+crypto_api_name,
 function_name,
 function_category, 
 misuse_category, 
