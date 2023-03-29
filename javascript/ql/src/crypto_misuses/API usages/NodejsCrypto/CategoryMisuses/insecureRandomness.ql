@@ -32,9 +32,9 @@ and crypto_api_name = ""
   and path = reference1.getFile().getRelativePath() + " -> " + reference2.getFile().getRelativePath()
   and misuse_message = "This security context depends on a cryptographically insecure random number"
   and 
-    (sink.getNode().(RandSink) instanceof SensitiveWriteSink and status = "WARNING"
+    (sink.getNode().(Sink) instanceof SensitiveWriteSink and status = "WARNING"
     or
-    not sink.getNode().(RandSink) instanceof SensitiveWriteSink and status = "MISUSE")
+    not sink.getNode().(Sink) instanceof SensitiveWriteSink and status = "MISUSE")
   and extra_information = ""
   and source_reference = reference1.toString()
   and sink_reference = reference2.toString()
